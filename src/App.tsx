@@ -12,13 +12,17 @@ import { supabase } from './supabase';
 function App() {
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
     async function agregarPaciente(paciente: Paciente) {
-    const { error } = await supabase
-        .from('pacientes')
-        .insert(paciente);
-    
-    if (error) console.error(error);
-    else setPacientes([...pacientes, paciente]);
-}
+        const { error } = await supabase
+            .from('pacientes')
+            .insert(paciente);
+
+        if (error) {
+            console.error(error);
+            alert('Error al guardar el paciente');
+        } else {
+            setPacientes(prev => [...prev, paciente]);
+        }
+    }
     useEffect(() => {
         async function cargarPacientes() {
             const { data, error } = await supabase
