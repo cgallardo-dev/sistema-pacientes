@@ -9,7 +9,7 @@ function ListaPaciente({pacientes}: {pacientes: Paciente[]}) {
                     <li key={paciente.dni} className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-blue-600">
                     <Link to={`/pacientes/${paciente.dni}`} className="block">
                     <span className="font-bold">{paciente.nombre} {paciente.apellido}</span>
-                    <span className="text-gray-500 ml-2">- {paciente.edad} años - {paciente.enfermedad}</span>
+                    <span className="text-gray-500 ml-2">- {paciente.edad} años - {paciente.diagnostico}</span>
                     </Link>
                     </li>
                 ))}

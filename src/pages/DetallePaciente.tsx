@@ -12,7 +12,7 @@
                 <p className= "text-gray-700 mb-2">DNI del Paciente: {id}</p>
                 <p className= "text-gray-700 mb-2">Nombre: {paciente.nombre} {paciente.apellido}</p>
                 <p className= "text-gray-700 mb-2">Edad: {paciente.edad} años</p>
-                <p className= "text-gray-700 mb-2">Enfermedad: {paciente.enfermedad}</p>
+                <p className= "text-gray-700 mb-2">Enfermedad: {paciente.diagnostico}</p>
             </div>
         )
 

@@ -5,7 +5,7 @@ function FormularioPaciente({onAgregarPaciente}: {onAgregarPaciente: (paciente: 
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [edad, setEdad] = useState('');
-    const [enfermedad, setEnfermedad] = useState('');
+    const [diagnostico, setDiagnostico] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -14,14 +14,14 @@ function FormularioPaciente({onAgregarPaciente}: {onAgregarPaciente: (paciente: 
             nombre,
             apellido,
             edad : parseInt(edad),
-            enfermedad,
+            diagnostico,
         };
         onAgregarPaciente(nuevoPaciente)
         setDni('');
         setNombre('');
         setApellido('');
         setEdad('');
-        setEnfermedad('');
+        setDiagnostico('');
     };
 
 
@@ -54,9 +54,9 @@ function FormularioPaciente({onAgregarPaciente}: {onAgregarPaciente: (paciente: 
             />
             <input className="border border-gray-300 rounded p-2 w-full mb-4"
                 type="text"
-                placeholder="Enfermedad"
-                value={enfermedad}
-                onChange={(e) => setEnfermedad(e.target.value)}
+                placeholder="Diagnóstico"
+                value={diagnostico}
+                onChange={(e) => setDiagnostico(e.target.value)}
             />
             <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full" type="submit">Agregar Paciente</button>
         </form>
