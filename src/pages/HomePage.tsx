@@ -10,13 +10,21 @@ function HomePage() {
         async function fetchTratamientos() {
             const { data, error } = await supabase
                 .from('tratamientos')
-                .select('id, fecha_hora, tipo');
+                .select(`
+                    id, 
+                    fecha_hora, 
+                    tipo, 
+                    pacientes (
+                        nombre, 
+                        apellido
+                    )
+                `);
 
             if (error) console.error(error);
             if (data) {
-                const formattedEvents = data.map(t => ({
-                    title: t.tipo === 'ozonoterapia' ? 'Ozono' : 'Láser',
-                    start: t.fecha_hora,
+                const formattedEvents = data.map((t: any) => ({
+                    title: `${t.pacientes?.nombre || 'Sin nombre'} ${t.pacientes?.apellido || ''} - ${t.tipo === 'ozonoterapia' ? 'Ozono' : 'Láser'}`,
+                    start: t.fecha_hora.replace('Z', '').split('+')[0],
                     allDay: false
                 }));
                 setEvents(formattedEvents);
@@ -29,7 +37,7 @@ function HomePage() {
         <div className="min-h-screen bg-gray-50 p-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-6">Agenda Semanal</h1>
             <div className="bg-white p-6 rounded-xl shadow-sm">
-                <Agenda events={events} view="timeGridWeek" />
+                <Agenda events={events} view="dayGridWeek" />
             </div>
         </div>
     );

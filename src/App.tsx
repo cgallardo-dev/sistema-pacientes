@@ -8,6 +8,8 @@ import NotFound from './pages/NotFound';
 import DetallePaciente from './pages/DetallePaciente';
 import Busqueda from './pages/Busqueda';
 import Registrar from './pages/Registrar';
+import Ozonoterapia from './pages/Ozonoterapia';
+import Laser from './pages/Laser';
 import { supabase } from './supabase';
 
 function App() {
@@ -37,6 +39,8 @@ function App() {
                 } />
                 <Route path="/pacientes/nuevo" element={<Registrar />} />
                 <Route path="/pacientes/:id" element={<DetallePaciente pacientes={pacientes} />} />
+                <Route path="/ozonoterapia/:id" element={<Ozonoterapia />} />
+                <Route path="/laser/:id" element={<Laser />} />
                 <Route path="/busqueda" element={<Busqueda />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
