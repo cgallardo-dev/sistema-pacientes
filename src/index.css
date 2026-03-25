@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+.fc {
+  --fc-border-color: #334155;
+  --fc-daygrid-event-dot-width: 8px;
+  --fc-page-bg-color: #0f172a;
+  --fc-neutral-bg-color: #1e293b;
+  --fc-list-event-hover-bg-color: #334155;
+  color: #f1f5f9;
+}
+
+.fc .fc-toolbar-title {
+  color: #f8fafc;
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: #cbd5e1;
+}
+
+.fc .fc-day-today {
+  background-color: #1e293b !important;
+}

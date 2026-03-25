@@ -21,10 +21,12 @@ function Registrar() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12">
+        <div className="min-h-screen bg-slate-950 py-12">
             <div className="max-w-2xl mx-auto px-6">
-                <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Registrar Nuevo Paciente</h1>
-                <FormularioPaciente onAgregarPaciente={agregarPaciente} />
+                <h1 className="text-3xl font-bold text-white mb-8 text-center">Registrar Nuevo Paciente</h1>
+                <div className="bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-800">
+                    <FormularioPaciente onAgregarPaciente={agregarPaciente} />
+                </div>
             </div>
         </div>
     );

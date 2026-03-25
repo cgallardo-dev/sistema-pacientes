@@ -27,38 +27,38 @@ function FormularioPaciente({onAgregarPaciente}: {onAgregarPaciente: (paciente: 
 
     return (
         
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto mb-8">
-            <input className="border border-gray-300 rounded p-2 w-full mb-4"
+        <form onSubmit={handleSubmit} className="bg-slate-800 p-6 rounded-lg shadow-md max-w-2xl mx-auto mb-8 border border-slate-700">
+            <input className="border border-slate-700 bg-slate-950 text-white rounded p-2 w-full mb-4"
                 type="text"
                 placeholder="DNI"
                 value={dni}
                 onChange={(e) => setDni(e.target.value)}
             />
-            <input className="border border-gray-300 rounded p-2 w-full mb-4"
+            <input className="border border-slate-700 bg-slate-950 text-white rounded p-2 w-full mb-4"
                 type="text"
                 placeholder="Nombre"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
             />  
-            <input className="border border-gray-300 rounded p-2 w-full mb-4"
+            <input className="border border-slate-700 bg-slate-950 text-white rounded p-2 w-full mb-4"
                 type="text"
                 placeholder="Apellido"  
                 value={apellido}
                 onChange={(e) => setApellido(e.target.value)}
             />
-            <input className="border border-gray-300 rounded p-2 w-full mb-4"
+            <input className="border border-slate-700 bg-slate-950 text-white rounded p-2 w-full mb-4"
                 type="number"
                 placeholder="Edad"
                 value={edad}
                 onChange={(e) => setEdad(e.target.value)}
             />
-            <input className="border border-gray-300 rounded p-2 w-full mb-4"
+            <input className="border border-slate-700 bg-slate-950 text-white rounded p-2 w-full mb-4"
                 type="text"
                 placeholder="Diagnóstico"
                 value={diagnostico}
                 onChange={(e) => setDiagnostico(e.target.value)}
             />
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full" type="submit">Agregar Paciente</button>
+            <button className="bg-slate-700 text-white px-4 py-2 rounded hover:bg-slate-600 w-full" type="submit">Agregar Paciente</button>
         </form>
     );        
 }

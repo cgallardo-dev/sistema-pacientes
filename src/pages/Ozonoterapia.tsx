@@ -54,25 +54,27 @@ function Ozonoterapia() {
     }
 
     return (
-        <div className="p-6">
+        <div className="p-6 min-h-screen bg-slate-950 text-slate-100">
             <h1 className="text-2xl font-bold mb-4">Ozonoterapia para Paciente {id}</h1>
-            <Agenda events={events} view="dayGridWeek" />
-            <div className="mt-6 space-y-4">
+            <div className="bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-800">
+                <Agenda events={events} view="dayGridWeek" />
+            </div>
+            <div className="mt-6 space-y-4 bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-800">
                 {fechas.map((_, i) => (
                     <div key={i} className="flex gap-4">
-                        <input type="date" className="p-2 border" onChange={(e) => {
+                        <input type="date" className="p-2 border border-slate-700 bg-slate-800 rounded text-slate-100" onChange={(e) => {
                             const newFechas = [...fechas];
                             newFechas[i].date = e.target.value;
                             setFechas(newFechas);
                         }} />
-                        <input type="time" className="p-2 border" onChange={(e) => {
+                        <input type="time" className="p-2 border border-slate-700 bg-slate-800 rounded text-slate-100" onChange={(e) => {
                             const newFechas = [...fechas];
                             newFechas[i].time = e.target.value;
                             setFechas(newFechas);
                         }} />
                     </div>
                 ))}
-                <button onClick={registrarTratamientos} disabled={isSubmitting} className={`bg-blue-600 text-white p-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <button onClick={registrarTratamientos} disabled={isSubmitting} className={`bg-blue-600 text-white p-2 rounded hover:bg-blue-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     {isSubmitting ? 'Guardando...' : 'Guardar 3 Fechas'}
                 </button>
             </div>

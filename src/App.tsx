@@ -33,7 +33,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/pacientes" element={
-                    <div className="py-12">
+                    <div className="min-h-screen bg-slate-950 py-12">
                         <ListaPaciente pacientes={pacientes} />
                     </div>
                 } />
