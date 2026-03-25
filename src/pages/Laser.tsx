@@ -8,6 +8,8 @@ function Laser() {
     const [events, setEvents] = useState<any[]>([]);
     const [fechas, setFechas] = useState([{ date: '', time: '09:00' }, { date: '', time: '09:00' }]);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
         async function fetchTratamientos() {
             const { data } = await supabase
@@ -34,12 +36,15 @@ function Laser() {
     }, []);
 
     async function registrarTratamientos() {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         const insertData = fechas.map(f => ({
             paciente_dni: id,
             tipo: 'laser',
             fecha_hora: `${f.date}T${f.time}:00`
         }));
         const { error } = await supabase.from('tratamientos').insert(insertData);
+        setIsSubmitting(false);
         if (error) alert('Error');
         else {
             alert('Registrado');
@@ -66,7 +71,9 @@ function Laser() {
                         }} />
                     </div>
                 ))}
-                <button onClick={registrarTratamientos} className="bg-green-600 text-white p-2">Guardar 2 Fechas</button>
+                <button onClick={registrarTratamientos} disabled={isSubmitting} className={`bg-green-600 text-white p-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    {isSubmitting ? 'Guardando...' : 'Guardar 2 Fechas'}
+                </button>
             </div>
         </div>
     );

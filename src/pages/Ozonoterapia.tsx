@@ -8,6 +8,8 @@ function Ozonoterapia() {
     const [events, setEvents] = useState<any[]>([]);
     const [fechas, setFechas] = useState([{ date: '', time: '09:00' }, { date: '', time: '09:00' }, { date: '', time: '09:00' }]);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
         async function fetchTratamientos() {
             const { data } = await supabase
@@ -35,12 +37,15 @@ function Ozonoterapia() {
     }, []);
 
     async function registrarTratamientos() {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         const insertData = fechas.map(f => ({
             paciente_dni: id,
             tipo: 'ozonoterapia',
             fecha_hora: `${f.date}T${f.time}:00`
         }));
         const { error } = await supabase.from('tratamientos').insert(insertData);
+        setIsSubmitting(false);
         if (error) alert('Error');
         else {
             alert('Registrado');
@@ -67,7 +72,9 @@ function Ozonoterapia() {
                         }} />
                     </div>
                 ))}
-                <button onClick={registrarTratamientos} className="bg-blue-600 text-white p-2">Guardar 3 Fechas</button>
+                <button onClick={registrarTratamientos} disabled={isSubmitting} className={`bg-blue-600 text-white p-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    {isSubmitting ? 'Guardando...' : 'Guardar 3 Fechas'}
+                </button>
             </div>
         </div>
     );
