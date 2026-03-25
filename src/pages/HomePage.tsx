@@ -2,6 +2,7 @@
 import Agenda from '../components/Agenda';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase';
+import { getPatientColor } from '../utils/colors';
 
 function HomePage() {
     const [events, setEvents] = useState<any[]>([]);
@@ -14,6 +15,7 @@ function HomePage() {
                     id, 
                     fecha_hora, 
                     tipo, 
+                    paciente_dni,
                     pacientes (
                         nombre, 
                         apellido
@@ -25,7 +27,8 @@ function HomePage() {
                 const formattedEvents = data.map((t: any) => ({
                     title: `${t.pacientes?.nombre || 'Sin nombre'} ${t.pacientes?.apellido || ''} - ${t.tipo === 'ozonoterapia' ? 'Ozono' : 'Láser'}`,
                     start: t.fecha_hora.replace('Z', '').split('+')[0],
-                    allDay: false
+                    allDay: false,
+                    color: getPatientColor(t.paciente_dni || t.id)
                 }));
                 setEvents(formattedEvents);
             }

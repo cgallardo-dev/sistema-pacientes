@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
 import Agenda from "../components/Agenda";
+import { getPatientColor } from "../utils/colors";
 
 function Ozonoterapia() {
     const { id } = useParams();
@@ -18,6 +19,7 @@ function Ozonoterapia() {
                     id, 
                     fecha_hora, 
                     tipo, 
+                    paciente_dni,
                     pacientes (
                         nombre, 
                         apellido
@@ -28,7 +30,8 @@ function Ozonoterapia() {
                 setEvents(data.map((t: any) => ({ 
                     title: `${t.pacientes?.nombre || ''} ${t.pacientes?.apellido || ''} - Ozono`, 
                     start: t.fecha_hora.replace('Z', '').split('+')[0], 
-                    allDay: false 
+                    allDay: false,
+                    color: getPatientColor(t.paciente_dni)
                 })));
             }
 
