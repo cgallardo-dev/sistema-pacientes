@@ -41,6 +41,7 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
     };
 
     const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString(new Date()));
+    const [currentView, setCurrentView] = useState<string>(view);
 
     useEffect(() => {
         const mediaQuery = window.matchMedia('(max-width: 768px)');
@@ -62,7 +63,7 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
     }, [initialDate]);
 
     return (
-        <div className={isMobile ? "mobile-calendar-view" : ""}>
+        <div className={isMobile ? `mobile-calendar-view view-${currentView}` : ""}>
             {isMobile && (
                 <style>{`
                     /* Quita el cuadro que cubre todo el calendario y bordes internos */
@@ -83,8 +84,12 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                     .mobile-calendar-view .fc .fc-button-primary:hover {
                         background-color: #334155 !important; /* slate-700 */
                     }
+                    .mobile-calendar-view .fc .fc-button-active {
+                        background-color: #1e293b !important; /* slate-800 */
+                        color: #38bdf8 !important; /* sky-400 */
+                    }
                     .mobile-calendar-view .fc .fc-icon {
-                        font-size: 1rem !important;
+                        font-size: 1.25rem !important;
                     }
                     /* Ajuste para que los textos en el header no se monten/pisen y ocupen el 100% de ancho */
                     .mobile-calendar-view .fc-col-header-cell-cushion {
@@ -92,28 +97,70 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                         padding: 0 !important;
                         width: 100%;
                     }
-                    /* Título capitalizado para que diga "Marzo" en vez de "marzo" */
-                    .mobile-calendar-view .fc-toolbar-title {
-                        font-size: 1.1rem !important;
-                        text-transform: capitalize;
+                    
+                    /* ESTRUCTURA DEL TOOLBAR (Mobile) */
+                    .mobile-calendar-view .fc-toolbar {
+                        display: flex;
+                        flex-direction: column; /* Coloca titulo arriba y controles abajo */
+                        align-items: flex-start;
+                        gap: 1rem;
+                        margin-bottom: 1.5rem !important;
                     }
-                    /* Quitar fondo gris del "hoy" en el cuerpo del calendario (el que se iba para abajo) */
+                    /* Título como subtítulo superior */
+                    .mobile-calendar-view .fc-toolbar-chunk:nth-child(1) {
+                        width: 100%;
+                    }
+                    /* Título capitalizado y separado */
+                    .mobile-calendar-view .fc-toolbar-title {
+                        font-size: 1.15rem !important;
+                        text-transform: capitalize;
+                        color: #94a3b8 !important; /* slate-400 */
+                        letter-spacing: 0.025em;
+                    }
+                    /* Controles: flechas izq, botones der */
+                    .mobile-calendar-view .fc-toolbar-chunk:nth-child(3) {
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-between; /* Flechas a la izq, Mes/Semana a la der */
+                        align-items: center;
+                    }
+                    
+                    /* Quitar fondo gris del "hoy" en el cuerpo del calendario */
                     .mobile-calendar-view td.fc-day-today {
                         background-color: transparent !important;
                     }
-                    /* Ocultar contenido del cuerpo de los días para colapsarlo */
-                    .mobile-calendar-view .fc-daygrid-day-frame {
+                    .mobile-calendar-view th.fc-day-today {
+                        background-color: transparent !important;
+                    }
+                    
+                    /* CONFIGURACION ESPECÍFICA PARA LA VISTA SEMANAL (colapsar el body para dejar solo el header) */
+                    .mobile-calendar-view.view-dayGridWeek .fc-daygrid-day-frame {
                         min-height: 0 !important;
                         height: 0 !important;
                         padding: 0 !important;
                         margin: 0 !important;
                     }
-                    .mobile-calendar-view .fc-daygrid-day-events,
-                    .mobile-calendar-view .fc-daygrid-day-bg {
-                        display: none !important;
+                    .mobile-calendar-view.view-dayGridWeek .fc-daygrid-day-top,
+                    .mobile-calendar-view.view-dayGridWeek .fc-daygrid-day-events,
+                    .mobile-calendar-view.view-dayGridWeek .fc-daygrid-day-bg {
+                        display: none !important; /* Oculta TODO el contenido del dia para que NO se duplique */
                     }
-                    .mobile-calendar-view th.fc-day-today {
-                        background-color: transparent !important;
+
+                    /* CONFIGURACION ESPECÍFICA PARA LA VISTA MENSUAL (mostrar grilla compacta de dias) */
+                    .mobile-calendar-view.view-dayGridMonth .fc-daygrid-day-frame {
+                        min-height: 2.5rem !important;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .mobile-calendar-view.view-dayGridMonth .fc-daygrid-day-top {
+                        display: flex;
+                        justify-content: center;
+                        width: 100%;
+                    }
+                    .mobile-calendar-view.view-dayGridMonth .fc-daygrid-day-events,
+                    .mobile-calendar-view.view-dayGridMonth .fc-daygrid-day-bg {
+                        display: none !important; /* ocultamos eventos nativos */
                     }
                 `}</style>
             )}
@@ -121,13 +168,14 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                 ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 initialView={view}
+                datesSet={(arg) => setCurrentView(arg.view.type)}
                 // Si es móvil le pasamos un array vacío para que NO salgan los tratamientos
                 events={isMobile ? [] : events}
                 dateClick={onDateClick}
                 headerToolbar={{
-                    left: isMobile ? 'prev,next' : 'prev,next today',
-                    center: 'title',
-                    right: isMobile ? 'today' : 'dayGridMonth,dayGridWeek'
+                    left: 'title',
+                    center: '',
+                    right: 'prev,next dayGridMonth,dayGridWeek'
                 }}
                 titleFormat={isMobile ? { year: 'numeric', month: 'long' } : undefined}
                 // Usamos un locale custom para sobreescribir el titulo default (ej: de "marzo de 2026" a "marzo 2026")
@@ -146,33 +194,38 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                     const dayNumber = date.getDate();
 
                     if (isMobile) {
-                        // Formatear fecha para comparar con los eventos (YYYY-MM-DD)
-                        const dateString = getLocalDateString(date);
-                        const isSelected = dateString === selectedDate;
-                        
-                        // Verificamos si en la lista general de 'events' hay alguno en este día
-                        const hasEvent = events.some(e => e.start && e.start.startsWith(dateString));
+                        if (args.view.type === 'dayGridWeek') {
+                            // En vista semanal móvil, el header contiene día y número colapsado
+                            const dateString = getLocalDateString(date);
+                            const isSelected = dateString === selectedDate;
+                            const hasEvent = events.some(e => e.start && e.start.startsWith(dateString));
 
-                        return (
-                            <div 
-                                className={`flex flex-col items-center justify-center w-full cursor-pointer transition-colors ${isSelected ? 'bg-slate-800 rounded-t-lg' : ''}`}
-                                onClick={() => setSelectedDate(dateString)}
-                            >
-                                {/* Contenedor del nombre del día con borde abajo que al extenderse 100% crea una línea continua */}
-                                <div className={`w-full border-b border-slate-600 pb-1 mb-1 ${isSelected ? 'bg-slate-800 rounded-t-lg' : 'bg-slate-900'}`}>
-                                    <span className={`text-xs uppercase font-medium ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`}>{dayName.replace('.', '')}</span>
+                            return (
+                                <div 
+                                    className={`flex flex-col items-center justify-center w-full cursor-pointer transition-colors ${isSelected ? 'bg-slate-800 rounded-t-lg' : ''}`}
+                                    onClick={() => setSelectedDate(dateString)}
+                                >
+                                    <div className={`w-full border-b border-slate-600 pb-1 mb-1 ${isSelected ? 'bg-slate-800 rounded-t-lg' : 'bg-slate-900'}`}>
+                                        <span className={`text-xs uppercase font-medium ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`}>{dayName.replace('.', '')}</span>
+                                    </div>
+                                    <div className="flex flex-col items-center justify-center pb-2">
+                                        <span className={`text-base font-bold leading-tight ${isSelected ? 'text-cyan-400' : 'text-slate-100'}`}>{dayNumber}</span>
+                                        {hasEvent ? (
+                                            <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mt-1 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></div>
+                                        ) : (
+                                            <div className="w-1.5 h-1.5 mt-1"></div>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex flex-col items-center justify-center pb-2">
-                                    <span className={`text-base font-bold leading-tight ${isSelected ? 'text-cyan-400' : 'text-slate-100'}`}>{dayNumber}</span>
-                                    {/* Indicador visual de tratamiento */}
-                                    {hasEvent ? (
-                                        <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mt-1 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></div>
-                                    ) : (
-                                        <div className="w-1.5 h-1.5 mt-1"></div> /* Espacio invisible para mantener la alineación */
-                                    )}
+                            );
+                        } else {
+                            // En vista mensual móvil, el header SOLO tiene el nombre del día
+                            return (
+                                <div className="w-full border-b border-slate-600 pb-1 mb-1 bg-slate-900 flex justify-center">
+                                    <span className="text-xs uppercase font-medium text-slate-400">{dayName.replace('.', '')}</span>
                                 </div>
-                            </div>
-                        );
+                            );
+                        }
                     }
                     
                     // En PC muestra el formato "dom 12"
@@ -182,6 +235,37 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                             <span className="text-sm font-bold text-slate-100">{dayNumber}</span>
                         </div>
                     );
+                }}
+                dayCellContent={(args) => {
+                    if (isMobile) {
+                        if (args.view.type === 'dayGridMonth') {
+                            // En vista mensual móvil, la celda (body) dibuja el número y el dot
+                            const dateString = getLocalDateString(args.date);
+                            const isSelected = dateString === selectedDate;
+                            const hasEvent = events.some(e => e.start && e.start.startsWith(dateString));
+                            // Quitamos el "el " que a veces inyecta FullCalendar en locale "es"
+                            const numText = args.dayNumberText.replace('el ', '').trim();
+
+                            return (
+                                <div 
+                                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg cursor-pointer transition-colors mx-auto w-9 h-11 ${isSelected ? 'bg-slate-800 border border-slate-700' : ''}`}
+                                    onClick={() => setSelectedDate(dateString)}
+                                >
+                                    <span className={`text-sm font-bold leading-none ${isSelected ? 'text-cyan-400' : (args.isOther ? 'text-slate-600' : 'text-slate-100')}`}>{numText}</span>
+                                    {hasEvent ? (
+                                        <div className={`w-1.5 h-1.5 rounded-full mt-1 ${isSelected ? 'bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]' : 'bg-slate-500'}`}></div>
+                                    ) : (
+                                        <div className="w-1.5 h-1.5 mt-1"></div>
+                                    )}
+                                </div>
+                            );
+                        } else if (args.view.type === 'dayGridWeek') {
+                            // CRÍTICO PARA EL BUG DE DUPLICACIÓN: en la vista semanal móvil,
+                            // no renderizar NADA en la celda del día (solo usamos los encabezados).
+                            return <></>;
+                        }
+                    }
+                    return undefined; // Comportamiento por defecto
                 }}
                 dayMaxEvents={true}
                 eventDisplay="block"
