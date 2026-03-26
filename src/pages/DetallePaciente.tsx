@@ -16,16 +16,16 @@ function DetallePaciente({ pacientes }: { pacientes: Paciente[] }) {
 
                 <div className="space-y-4 border-t border-slate-700 pt-6">
                     <h2 className="text-xl font-bold text-white">Registrar Tratamientos</h2>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <Link 
                             to={`/ozonoterapia/${id}`}
-                            className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            className="bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded hover:bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all duration-300 text-center"
                         >
                             Registrar Ozonoterapia
                         </Link>
                         <Link 
                             to={`/laser/${id}`}
-                            className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600"
+                            className="bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded hover:bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all duration-300 text-center"
                         >
                             Registrar Láser
                         </Link>

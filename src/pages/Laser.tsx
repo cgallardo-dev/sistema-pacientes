@@ -130,7 +130,7 @@ function Laser() {
                         }} />
                     </div>
                 ))}
-                <button onClick={registrarTratamientos} disabled={isSubmitting} className={`bg-green-600 text-white p-2 rounded hover:bg-green-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <button onClick={registrarTratamientos} disabled={isSubmitting} className={`w-full md:w-auto bg-cyan-400 text-slate-950 font-bold p-3 rounded hover:bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all duration-300 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     {isSubmitting ? 'Guardando...' : 'Guardar 2 Fechas'}
                 </button>
             </div>
