@@ -31,7 +31,8 @@ function Laser() {
                     title: `${t.pacientes?.nombre || ''} ${t.pacientes?.apellido || ''} - Láser`, 
                     start: t.fecha_hora.replace('Z', '').split('+')[0], 
                     allDay: false,
-                    color: getPatientColor(t.paciente_dni || t.id)
+                    color: getPatientColor(t.paciente_dni || t.id),
+                    paciente_dni: String(t.paciente_dni || t.id)
                 })));
             }
         }
@@ -40,6 +41,59 @@ function Laser() {
 
     async function registrarTratamientos() {
         if (isSubmitting) return;
+
+        // 1. Validar que no haya fechas vacías
+        const missingDates = fechas.some(f => !f.date || !f.time);
+        if (missingDates) {
+            alert('Por favor, selecciona una fecha y hora para todas las sesiones antes de guardar.');
+            return;
+        }
+
+        // 2. Validar que no haya DUPLICADOS EXACTOS dentro del mismo formulario (misma fecha y misma hora)
+        const selectedDateTimes = fechas.map(f => `${f.date}T${f.time}`);
+        const uniqueDateTimes = new Set(selectedDateTimes);
+        if (uniqueDateTimes.size !== selectedDateTimes.length) {
+            alert('Error: Has seleccionado la misma fecha y hora más de una vez en el formulario.');
+            return;
+        }
+
+        // 3. Validar que el paciente no tenga ya un tratamiento de láser agendado en ese MISMO DÍA (regla de negocio 1 al día)
+        const existingDatesForPatient = events
+            .filter(e => e.paciente_dni === String(id))
+            .map(e => e.start.split('T')[0]);
+
+        const selectedDatesOnly = fechas.map(f => f.date);
+        const conflictDate = selectedDatesOnly.find(date => existingDatesForPatient.includes(date));
+        if (conflictDate) {
+            alert(`Error: El paciente ya tiene una sesión de láser agendada el día ${conflictDate.split('-').reverse().join('/')}. Solo se permite una por día.`);
+            return;
+        }
+
+        // 4. Validar que la FECHA Y HORA exactas no estén ya ocupadas por OTRO paciente (o el mismo)
+        // Pedimos TODO a la DB. Supabase nos devuelve "2026-03-13T09:00:00" o "2026-03-13T09:00:00+00:00"
+        const { data: allTratamientos } = await supabase
+            .from('tratamientos')
+            .select('fecha_hora');
+        
+        if (allTratamientos) {
+            for (const f of fechas) {
+                // Generamos la version local (ej: "2026-03-13T09:00")
+                const proposedDateTime = `${f.date}T${f.time}`;
+                
+                // Normalizamos lo que viene de la DB (le quitamos la Z y el timezone para compararlo como string crudo)
+                const isOccupied = allTratamientos.some((t: any) => {
+                    if (!t.fecha_hora) return false;
+                    const dbDateTimeNormalized = t.fecha_hora.replace('Z', '').split('+')[0].substring(0, 16);
+                    return dbDateTimeNormalized === proposedDateTime;
+                });
+
+                if (isOccupied) {
+                    alert(`Error: Ya existe un paciente con turno reservado el día ${f.date.split('-').reverse().join('/')} a las ${f.time}. Por favor, elige otro horario.`);
+                    return;
+                }
+            }
+        }
+
         setIsSubmitting(true);
         const insertData = fechas.map(f => ({
             paciente_dni: id,

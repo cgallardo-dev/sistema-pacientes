@@ -31,7 +31,8 @@ function Ozonoterapia() {
                     title: `${t.pacientes?.nombre || ''} ${t.pacientes?.apellido || ''} - Ozono`, 
                     start: t.fecha_hora.replace('Z', '').split('+')[0], 
                     allDay: false,
-                    color: getPatientColor(t.paciente_dni)
+                    color: getPatientColor(t.paciente_dni || t.id),
+                    paciente_dni: String(t.paciente_dni || t.id)
                 })));
             }
 
@@ -41,6 +42,59 @@ function Ozonoterapia() {
 
     async function registrarTratamientos() {
         if (isSubmitting) return;
+
+        // 1. Validar que no haya fechas vacías
+        const missingDates = fechas.some(f => !f.date || !f.time);
+        if (missingDates) {
+            alert('Por favor, selecciona una fecha y hora para todas las sesiones antes de guardar.');
+            return;
+        }
+
+        // 2. Validar que no haya DUPLICADOS EXACTOS dentro del mismo formulario (misma fecha y misma hora)
+        const selectedDateTimes = fechas.map(f => `${f.date}T${f.time}`);
+        const uniqueDateTimes = new Set(selectedDateTimes);
+        if (uniqueDateTimes.size !== selectedDateTimes.length) {
+            alert('Error: Has seleccionado la misma fecha y hora más de una vez en el formulario.');
+            return;
+        }
+
+        // 3. Validar que el paciente no tenga ya un tratamiento de ozonoterapia agendado en ese MISMO DÍA
+        const existingDatesForPatient = events
+            .filter(e => e.paciente_dni === String(id))
+            .map(e => e.start.split('T')[0]);
+
+        const selectedDatesOnly = fechas.map(f => f.date);
+        const conflictDate = selectedDatesOnly.find(date => existingDatesForPatient.includes(date));
+        if (conflictDate) {
+            alert(`Error: El paciente ya tiene una sesión de ozonoterapia agendada el día ${conflictDate.split('-').reverse().join('/')}. Solo se permite una por día.`);
+            return;
+        }
+
+        // 4. Validar que la FECHA Y HORA exactas no estén ya ocupadas por OTRO paciente (o el mismo)
+        // Consultamos TODO a la DB.
+        const { data: allTratamientos } = await supabase
+            .from('tratamientos')
+            .select('fecha_hora');
+        
+        if (allTratamientos) {
+            for (const f of fechas) {
+                // Generamos la version local (ej: "2026-03-13T09:00")
+                const proposedDateTime = `${f.date}T${f.time}`;
+                
+                // Normalizamos lo que viene de la DB
+                const isOccupied = allTratamientos.some((t: any) => {
+                    if (!t.fecha_hora) return false;
+                    const dbDateTimeNormalized = t.fecha_hora.replace('Z', '').split('+')[0].substring(0, 16);
+                    return dbDateTimeNormalized === proposedDateTime;
+                });
+
+                if (isOccupied) {
+                    alert(`Error: Ya existe un paciente con turno reservado el día ${f.date.split('-').reverse().join('/')} a las ${f.time}. Por favor, elige otro horario.`);
+                    return;
+                }
+            }
+        }
+
         setIsSubmitting(true);
         const insertData = fechas.map(f => ({
             paciente_dni: id,
