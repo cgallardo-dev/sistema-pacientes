@@ -39,7 +39,7 @@ function HomePage() {
     return (
         <div className="min-h-screen bg-slate-950 p-6 text-slate-100">
             <h1 className="text-3xl font-bold mb-6 text-white">Agenda Semanal</h1>
-            <div className="bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-800">
+            <div className="md:bg-slate-900 md:p-6 md:rounded-xl md:shadow-lg md:border md:border-slate-800">
                 <Agenda events={events} view="dayGridWeek" />
             </div>
         </div>

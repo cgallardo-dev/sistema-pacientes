@@ -58,10 +58,10 @@ function Laser() {
     return (
         <div className="p-6 min-h-screen bg-slate-950 text-slate-100">
             <h1 className="text-2xl font-bold mb-4">Láser para Paciente {id}</h1>
-            <div className="bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-800">
+            <div className="md:bg-slate-900 md:p-6 md:rounded-xl md:shadow-lg md:border md:border-slate-800">
                 <Agenda events={events} view="dayGridMonth" />
             </div>
-            <div className="mt-6 space-y-4 bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-800">
+            <div className="mt-6 space-y-4 md:bg-slate-900 md:p-6 md:rounded-xl md:shadow-lg md:border md:border-slate-800">
                 {fechas.map((_, i) => (
                     <div key={i} className="flex gap-4">
                         <input type="date" className="p-2 border border-slate-700 bg-slate-800 rounded text-slate-100" onChange={(e) => {
