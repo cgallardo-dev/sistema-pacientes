@@ -14,6 +14,7 @@ function HomePage() {
                 .select(`
                     id, 
                     fecha_hora, 
+                    fecha_hora_fin,
                     tipo, 
                     paciente_dni,
                     pacientes (
@@ -27,6 +28,7 @@ function HomePage() {
                 const formattedEvents = data.map((t: any) => ({
                     title: `${t.pacientes?.nombre || 'Sin nombre'} ${t.pacientes?.apellido || ''} - ${t.tipo === 'ozonoterapia' ? 'Ozono' : 'Láser'}`,
                     start: t.fecha_hora.replace('Z', '').split('+')[0],
+                    end: t.fecha_hora_fin ? t.fecha_hora_fin.replace('Z', '').split('+')[0] : undefined,
                     allDay: false,
                     color: getPatientColor(t.paciente_dni || t.id)
                 }));

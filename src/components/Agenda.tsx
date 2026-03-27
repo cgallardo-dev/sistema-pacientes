@@ -292,18 +292,23 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                     <div className="space-y-3">
                         {events.filter(e => e.start && e.start.startsWith(selectedDate)).length > 0 ? (
                             events.filter(e => e.start && e.start.startsWith(selectedDate)).map((ev, idx) => {
-                                // Extraer hora del string ISO (ej: 2026-03-22T09:00)
+                                // Extraer hora de inicio y fin del string ISO (ej: 2026-03-22T09:00)
                                 const timeMatch = ev.start.match(/T(\d{2}:\d{2})/);
                                 const time = timeMatch ? timeMatch[1] : '';
+
+                                const timeEndMatch = ev.end ? ev.end.match(/T(\d{2}:\d{2})/) : null;
+                                const timeEnd = timeEndMatch ? timeEndMatch[1] : '';
                                 
+                                const timeDisplay = timeEnd ? `${time}-${timeEnd}` : time;
+
                                 return (
                                     <div key={idx} className="bg-slate-800 p-3 rounded-lg shadow-md flex items-center justify-between border-l-4" style={{ borderLeftColor: ev.color || '#22d3ee' }}>
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-slate-100">{ev.title}</span>
                                         </div>
-                                        {time && (
+                                        {timeDisplay && (
                                             <span className="text-xs font-bold text-slate-300 bg-slate-900 px-2 py-1.5 rounded ml-4 whitespace-nowrap border border-slate-700">
-                                                {time}
+                                                {timeDisplay}
                                             </span>
                                         )}
                                     </div>
