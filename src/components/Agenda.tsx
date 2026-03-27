@@ -290,35 +290,50 @@ function Agenda({ events, onDateClick, view = 'dayGridWeek', initialDate }: Agen
                         );
                     })()}
                     <div className="space-y-3">
-                        {events.filter(e => e.start && e.start.startsWith(selectedDate)).length > 0 ? (
-                            events.filter(e => e.start && e.start.startsWith(selectedDate)).map((ev, idx) => {
-                                // Extraer hora de inicio y fin del string ISO (ej: 2026-03-22T09:00)
-                                const timeMatch = ev.start.match(/T(\d{2}:\d{2})/);
-                                const time = timeMatch ? timeMatch[1] : '';
+                        {(() => {
+                            const dayEvents = events.filter(e => e.start && e.start.startsWith(selectedDate));
+                            
+                            // Ordenar eventos de menor a mayor por hora
+                            dayEvents.sort((a, b) => {
+                                const timeA = a.start.match(/T(\d{2}:\d{2})/) ? a.start.match(/T(\d{2}:\d{2})/)[1] : '00:00';
+                                const timeB = b.start.match(/T(\d{2}:\d{2})/) ? b.start.match(/T(\d{2}:\d{2})/)[1] : '00:00';
+                                return timeA.localeCompare(timeB);
+                            });
 
-                                const timeEndMatch = ev.end ? ev.end.match(/T(\d{2}:\d{2})/) : null;
-                                const timeEnd = timeEndMatch ? timeEndMatch[1] : '';
-                                
-                                const timeDisplay = timeEnd ? `${time}-${timeEnd}` : time;
+                            if (dayEvents.length > 0) {
+                                return dayEvents.map((ev, idx) => {
+                                    // Extraer hora de inicio y fin del string ISO (ej: 2026-03-22T09:00)
+                                    const timeMatch = ev.start.match(/T(\d{2}:\d{2})/);
+                                    const time = timeMatch ? timeMatch[1] : '';
 
-                                return (
-                                    <div key={idx} className="bg-slate-800 p-3 rounded-lg shadow-md flex items-center justify-between border-l-4" style={{ borderLeftColor: ev.color || '#22d3ee' }}>
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-slate-100">{ev.title}</span>
+                                    const timeEndMatch = ev.end ? ev.end.match(/T(\d{2}:\d{2})/) : null;
+                                    const timeEnd = timeEndMatch ? timeEndMatch[1] : '';
+                                    
+                                    const timeDisplay = timeEnd ? `${time}-${timeEnd}` : time;
+                                    
+                                    const isCompletado = ev.extendedProps?.completado || (ev.classNames && ev.classNames.includes('line-through'));
+
+                                    return (
+                                        <div key={idx} className={`bg-slate-800 p-3 rounded-lg shadow-md flex items-center justify-between border-l-4 ${isCompletado ? 'opacity-60' : ''}`} style={{ borderLeftColor: ev.color || '#22d3ee' }}>
+                                            <div className="flex flex-col">
+                                                <span className={`font-semibold text-slate-100 ${isCompletado ? 'line-through text-slate-400' : ''}`}>{ev.title}</span>
+                                            </div>
+                                            {timeDisplay && (
+                                                <span className={`text-xs font-bold px-2 py-1.5 rounded ml-4 whitespace-nowrap border ${isCompletado ? 'text-slate-500 bg-slate-800 border-slate-700 line-through' : 'text-slate-300 bg-slate-900 border-slate-700'}`}>
+                                                    {timeDisplay}
+                                                </span>
+                                            )}
                                         </div>
-                                        {timeDisplay && (
-                                            <span className="text-xs font-bold text-slate-300 bg-slate-900 px-2 py-1.5 rounded ml-4 whitespace-nowrap border border-slate-700">
-                                                {timeDisplay}
-                                            </span>
-                                        )}
+                                    );
+                                });
+                            } else {
+                                return (
+                                    <div className="bg-slate-900/50 rounded-lg p-6 text-center border border-slate-800 border-dashed">
+                                        <p className="text-slate-500 italic text-sm">No hay tratamientos agendados para este día.</p>
                                     </div>
                                 );
-                            })
-                        ) : (
-                            <div className="bg-slate-900/50 rounded-lg p-6 text-center border border-slate-800 border-dashed">
-                                <p className="text-slate-500 italic text-sm">No hay tratamientos agendados para este día.</p>
-                            </div>
-                        )}
+                            }
+                        })()}
                     </div>
                 </div>
             )}

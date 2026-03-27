@@ -70,8 +70,105 @@ function PlanMensual() {
     const [isLaserStarted, setIsLaserStarted] = useState(false);
     const [isOzonoStarted, setIsOzonoStarted] = useState(false);
 
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editDate, setEditDate] = useState('');
+    const [editTime, setEditTime] = useState('');
+    const [editTimeEnd, setEditTimeEnd] = useState('');
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+    const startEdit = (t: any) => {
+        const datePart = t.fecha_hora.replace('Z', '').split('+')[0].split('T')[0];
+        const timePart = t.fecha_hora.replace('Z', '').split('+')[0].split('T')[1].substring(0, 5);
+        const timeEndPart = t.fecha_hora_fin ? t.fecha_hora_fin.replace('Z', '').split('+')[0].split('T')[1].substring(0, 5) : '';
+        setEditDate(datePart);
+        setEditTime(timePart);
+        setEditTimeEnd(timeEndPart);
+        setEditingId(t.id);
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+    };
+
+    const saveEdit = async (t: any) => {
+        if (!editDate || !editTime || !editTimeEnd) {
+            alert('Completa todos los campos'); return;
+        }
+        const proposedStart = new Date(`${editDate}T${editTime}`);
+        const proposedEnd = new Date(`${editDate}T${editTimeEnd}`);
+
+        if (proposedStart >= proposedEnd) {
+            alert('Hora de inicio no puede ser mayor o igual a la de fin.'); return;
+        }
+
+        setIsSavingEdit(true);
+        // Validar solapamiento
+        const { data: allTratamientos } = await supabase.from('tratamientos').select('id, fecha_hora, fecha_hora_fin');
+        if (allTratamientos) {
+            const isOccupied = allTratamientos.some((other: any) => {
+                if (other.id === t.id) return false;
+                if (!other.fecha_hora) return false;
+                const dbStart = new Date(other.fecha_hora.replace('Z', '').split('+')[0].substring(0, 16));
+                let dbEnd = new Date(dbStart.getTime() + 60*60*1000);
+                if (other.fecha_hora_fin) {
+                    dbEnd = new Date(other.fecha_hora_fin.replace('Z', '').split('+')[0].substring(0, 16));
+                }
+                return (proposedStart < dbEnd) && (proposedEnd > dbStart);
+            });
+            if (isOccupied) {
+                alert('El nuevo horario se superpone con un turno ya reservado.'); 
+                setIsSavingEdit(false);
+                return;
+            }
+        }
+        
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const formatForDB = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+
+        const { error } = await supabase.from('tratamientos')
+            .update({
+                fecha_hora: formatForDB(proposedStart),
+                fecha_hora_fin: formatForDB(proposedEnd)
+            }).eq('id', t.id);
+
+        setIsSavingEdit(false);
+        if (!error) {
+            window.location.reload();
+        } else {
+            alert('Error al reprogramar');
+        }
+    };
+
     // Renderizador de un ítem de sesión para que el código quede limpio
     const renderSesionItem = (t: any, index: number, isProxima: boolean) => {
+        if (editingId === t.id) {
+            return (
+                <li key={t.id} className="p-4 bg-slate-800 rounded-lg border border-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                    <div className="flex flex-col gap-3">
+                        <span className="text-cyan-400 font-bold text-xs">REPROGRAMANDO SESIÓN</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div className="flex flex-col">
+                                <label className="text-xs text-slate-400 mb-1">Día</label>
+                                <input type="date" value={editDate} onChange={e => setEditDate(e.target.value)} className="p-2 border border-slate-700 bg-slate-900 rounded text-sm text-slate-100" />
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-xs text-slate-400 mb-1">Hora Inicio</label>
+                                <input type="time" value={editTime} onChange={e => setEditTime(e.target.value)} className="p-2 border border-slate-700 bg-slate-900 rounded text-sm text-slate-100" />
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-xs text-slate-400 mb-1">Hora Fin</label>
+                                <input type="time" value={editTimeEnd} onChange={e => setEditTimeEnd(e.target.value)} className="p-2 border border-slate-700 bg-slate-900 rounded text-sm text-slate-100" />
+                            </div>
+                        </div>
+                        <div className="flex gap-2 justify-end mt-2">
+                            <button onClick={cancelEdit} disabled={isSavingEdit} className="px-3 py-1.5 rounded text-sm font-bold text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                            <button onClick={() => saveEdit(t)} disabled={isSavingEdit} className={`px-4 py-1.5 rounded text-sm font-bold bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition-colors ${isSavingEdit ? 'opacity-50' : ''}`}>Guardar</button>
+                        </div>
+                    </div>
+                </li>
+            );
+        }
+
         const datePart = t.fecha_hora.replace('Z', '').split('+')[0].split('T')[0];
         const timePart = t.fecha_hora.replace('Z', '').split('+')[0].split('T')[1].substring(0, 5);
         const timeEndPart = t.fecha_hora_fin ? t.fecha_hora_fin.replace('Z', '').split('+')[0].split('T')[1].substring(0, 5) : '';
@@ -99,6 +196,11 @@ function PlanMensual() {
                             {isCompletado ? '✓ Completada' : 'Marcar completada'}
                         </span>
                     </label>
+                    {!isCompletado && (
+                        <button onClick={() => startEdit(t)} className="text-cyan-400 text-xs mt-2 w-max hover:underline text-left">
+                            Reprogramar sesión
+                        </button>
+                    )}
                 </div>
                 <strong className={`px-3 py-1.5 rounded-md border whitespace-nowrap shrink-0 ${isProxima ? 'text-cyan-100 bg-cyan-950/50 border-cyan-800' : (isCompletado ? 'text-emerald-100 bg-emerald-950/50 border-emerald-800' : 'text-white bg-slate-900 border-slate-700')}`}>
                     {day}/{month}/{year} | {timePart} {timeEndPart ? `a ${timeEndPart}` : ''} hs

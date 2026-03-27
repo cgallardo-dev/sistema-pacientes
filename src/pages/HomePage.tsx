@@ -17,6 +17,7 @@ function HomePage() {
                     fecha_hora_fin,
                     tipo, 
                     paciente_dni,
+                    completado,
                     pacientes (
                         nombre, 
                         apellido
@@ -30,7 +31,11 @@ function HomePage() {
                     start: t.fecha_hora.replace('Z', '').split('+')[0],
                     end: t.fecha_hora_fin ? t.fecha_hora_fin.replace('Z', '').split('+')[0] : undefined,
                     allDay: false,
-                    color: getPatientColor(t.paciente_dni || t.id)
+                    color: getPatientColor(t.paciente_dni || t.id),
+                    extendedProps: {
+                        completado: t.completado
+                    },
+                    classNames: t.completado ? ['line-through', 'opacity-60'] : []
                 }));
                 setEvents(formattedEvents);
             }
