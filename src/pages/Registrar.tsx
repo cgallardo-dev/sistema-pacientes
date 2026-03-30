@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import type { Paciente } from '../types/paciente';
 
-function Registrar() {
+function Registrar({ onPacienteAgregado }: { onPacienteAgregado: () => void }) {
     const navigate = useNavigate();
 
     async function agregarPaciente(paciente: Paciente) {
@@ -15,6 +15,7 @@ function Registrar() {
             console.error(error);
             alert('Error al guardar el paciente');
         } else {
+            onPacienteAgregado();
             alert('Paciente registrado exitosamente');
             navigate('/pacientes');
         }

@@ -19,15 +19,16 @@ import NotFound from './pages/NotFound';
 function App() {
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
 
-    useEffect(() => {
-        async function cargarPacientes() {
-            const { data, error } = await supabase
-                .from('pacientes')
-                .select('*');
+    async function cargarPacientes() {
+        const { data, error } = await supabase
+            .from('pacientes')
+            .select('*');
 
-            if (error) console.error(error);
-            if (data) setPacientes(data);
-        }
+        if (error) console.error(error);
+        if (data) setPacientes(data);
+    }
+
+    useEffect(() => {
         cargarPacientes();
     }, []);
 
@@ -41,7 +42,7 @@ function App() {
                         <ListaPaciente pacientes={pacientes} />
                     </div>
                 } />
-                <Route path="/pacientes/nuevo" element={<Registrar />} />
+                <Route path="/pacientes/nuevo" element={<Registrar onPacienteAgregado={cargarPacientes} />} />
                 <Route path="/pacientes/:id" element={<DetallePaciente pacientes={pacientes} />} />
                 <Route path="/plan-mensual/:id" element={<PlanMensual />} />
                 <Route path="/receta/:id" element={
