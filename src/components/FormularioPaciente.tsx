@@ -58,7 +58,7 @@ function FormularioPaciente({onAgregarPaciente}: {onAgregarPaciente: (paciente: 
                 value={diagnostico}
                 onChange={(e) => setDiagnostico(e.target.value)}
             />
-            <button className="bg-slate-700 text-white px-4 py-2 rounded hover:bg-slate-600 w-full" type="submit">Agregar Paciente</button>
+            <button className="bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded hover:bg-cyan-300 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] w-full" type="submit">Agregar Paciente</button>
         </form>
     );        
 }

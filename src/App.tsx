@@ -9,6 +9,9 @@ import DetallePaciente from './pages/DetallePaciente';
 import Busqueda from './pages/Busqueda';
 import Registrar from './pages/Registrar';
 import PlanMensual from './pages/PlanMensual';
+import Medicamentos from './pages/Medicamentos';
+import MedicamentoDetail from './pages/MedicamentoDetail';
+import Receta from './pages/Receta';
 import { supabase } from './supabase';
 
 function App() {
@@ -39,7 +42,22 @@ function App() {
                 <Route path="/pacientes/nuevo" element={<Registrar />} />
                 <Route path="/pacientes/:id" element={<DetallePaciente pacientes={pacientes} />} />
                 <Route path="/plan-mensual/:id" element={<PlanMensual />} />
+                <Route path="/receta/:id" element={
+                    <div className="min-h-screen bg-slate-950 py-12">
+                        <Receta />
+                    </div>
+                } />
                 <Route path="/busqueda" element={<Busqueda />} />
+                <Route path="/medicamentos" element={
+                    <div className="min-h-screen bg-slate-950 py-12">
+                        <Medicamentos />
+                    </div>
+                } />
+                <Route path="/medicamentos/:id" element={
+                    <div className="min-h-screen bg-slate-950 py-12">
+                        <MedicamentoDetail />
+                    </div>
+                } />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </div>

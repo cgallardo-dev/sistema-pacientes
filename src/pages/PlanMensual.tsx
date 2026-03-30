@@ -161,8 +161,8 @@ function PlanMensual() {
                             </div>
                         </div>
                         <div className="flex gap-2 justify-end mt-2">
-                            <button onClick={cancelEdit} disabled={isSavingEdit} className="px-3 py-1.5 rounded text-sm font-bold text-slate-400 hover:text-white transition-colors">Cancelar</button>
-                            <button onClick={() => saveEdit(t)} disabled={isSavingEdit} className={`px-4 py-1.5 rounded text-sm font-bold bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition-colors ${isSavingEdit ? 'opacity-50' : ''}`}>Guardar</button>
+                            <button onClick={cancelEdit} disabled={isSavingEdit} className="px-3 py-1.5 rounded text-sm font-bold bg-cyan-400 text-slate-950 hover:bg-cyan-300 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] disabled:opacity-50">Cancelar</button>
+                            <button onClick={() => saveEdit(t)} disabled={isSavingEdit} className={`px-4 py-1.5 rounded text-sm font-bold bg-cyan-400 text-slate-950 hover:bg-cyan-300 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] ${isSavingEdit ? 'opacity-50' : ''}`}>Guardar</button>
                         </div>
                     </div>
                 </li>
@@ -197,7 +197,7 @@ function PlanMensual() {
                         </span>
                     </label>
                     {!isCompletado && (
-                        <button onClick={() => startEdit(t)} className="text-cyan-400 text-xs mt-2 w-max hover:underline text-left">
+                        <button onClick={() => startEdit(t)} className="bg-cyan-400 text-slate-950 font-bold px-2 py-1 rounded text-xs mt-2 w-max hover:bg-cyan-300 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] text-left">
                             Reprogramar sesión
                         </button>
                     )}
@@ -489,7 +489,7 @@ function FormularioRegistro({ tipo, pacienteId, count, onSuccess, onCancel }: { 
             <button 
                 onClick={handleSubmit} 
                 disabled={isSubmitting} 
-                className={`mt-4 w-full bg-cyan-400 text-slate-950 font-bold p-3 rounded hover:bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all ${isSubmitting ? 'opacity-50' : ''}`}
+                className={`mt-4 w-full bg-cyan-400 text-slate-950 font-bold p-3 rounded hover:bg-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all ${isSubmitting ? 'opacity-50' : ''}`}
             >
                 {isSubmitting ? 'Guardando...' : 'Guardar Tratamiento'}
             </button>
@@ -498,7 +498,7 @@ function FormularioRegistro({ tipo, pacienteId, count, onSuccess, onCancel }: { 
                 <button 
                     onClick={onCancel} 
                     disabled={isSubmitting}
-                    className="mt-2 w-full bg-transparent border border-slate-600 text-slate-400 font-bold p-3 rounded hover:bg-slate-800 transition-all"
+                    className={`mt-2 w-full bg-cyan-400 text-slate-950 font-bold p-3 rounded hover:bg-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all ${isSubmitting ? 'opacity-50' : ''}`}
                 >
                     Cancelar
                 </button>

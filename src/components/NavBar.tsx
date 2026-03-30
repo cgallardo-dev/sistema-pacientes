@@ -22,14 +22,14 @@ function NavBar() {
 
                 {/* Botón Hamburguesa (solo visible en móviles) */}
                 <button 
-                    className="md:hidden flex flex-col items-center justify-center w-10 h-10 rounded-lg hover:bg-slate-800 focus:outline-none transition-colors"
+                    className="md:hidden flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-cyan-400 text-slate-950 font-bold hover:bg-cyan-300 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] focus:outline-none"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Alternar menú"
                 >
                     <div className="w-6 h-5 relative flex flex-col justify-between">
-                        <span className={`w-full h-0.5 bg-slate-200 rounded-full transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-                        <span className={`w-full h-0.5 bg-slate-200 rounded-full transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`}></span>
-                        <span className={`w-full h-0.5 bg-slate-200 rounded-full transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2.5' : ''}`}></span>
+                        <span className={`w-full h-0.5 bg-slate-950 rounded-full transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                        <span className={`w-full h-0.5 bg-slate-950 rounded-full transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`}></span>
+                        <span className={`w-full h-0.5 bg-slate-950 rounded-full transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2.5' : ''}`}></span>
                     </div>
                 </button>
 
@@ -59,6 +59,12 @@ function NavBar() {
                             className={`px-4 py-2.5 rounded-lg transition-colors font-medium ${location.pathname === '/pacientes' ? 'bg-slate-800 text-cyan-400' : 'text-slate-300 hover:text-white hover:bg-slate-800/80'}`}
                         >
                             Pacientes
+                        </Link>
+                        <Link 
+                            to="/medicamentos" 
+                            className={`px-4 py-2.5 rounded-lg transition-colors font-medium ${location.pathname.startsWith('/medicamentos') ? 'bg-slate-800 text-cyan-400' : 'text-slate-300 hover:text-white hover:bg-slate-800/80'}`}
+                        >
+                            Medicamentos
                         </Link>
                     </div>
                 </div>

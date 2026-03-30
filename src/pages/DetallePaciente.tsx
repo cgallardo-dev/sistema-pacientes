@@ -22,12 +22,18 @@ function DetallePaciente({ pacientes }: { pacientes: Paciente[] }) {
                     </p>
                 </div>
 
-                <div className="border-t border-slate-700 pt-8 flex justify-center">
+                <div className="border-t border-slate-700 pt-8 flex flex-col md:flex-row gap-4 justify-center">
                     <Link 
                         to={`/plan-mensual/${id}`}
                         className="bg-cyan-400 text-slate-950 font-bold px-8 py-4 rounded-xl hover:bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.6)] transition-all duration-300 text-center text-xl w-full md:w-auto"
                     >
                         Crear / Ver Plan Mensual
+                    </Link>
+                    <Link 
+                        to={`/receta/${id}`}
+                        className="bg-cyan-400 text-slate-950 font-bold px-8 py-4 rounded-xl hover:bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.6)] transition-all duration-300 text-center text-xl w-full md:w-auto"
+                    >
+                        Crear / Ver Receta
                     </Link>
                 </div>
             </div>
