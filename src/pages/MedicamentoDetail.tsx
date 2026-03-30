@@ -42,8 +42,9 @@ export default function MedicamentoDetail() {
                 setMedicamento(medData);
                 setMovimientos(movData);
                 setPacientes(pacData);
-            } catch (err: any) {
-                setError(err.message || 'Error cargando datos del medicamento');
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                setError(errorMessage || 'Error cargando datos del medicamento');
             } finally {
                 setLoading(false);
             }
@@ -87,8 +88,9 @@ export default function MedicamentoDetail() {
             setCantidad('');
             setPacienteDni('');
             
-        } catch (err: any) {
-            setFormError(err.message || 'Error registrando movimiento');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            setFormError(errorMessage || 'Error registrando movimiento');
         } finally {
             setIsSubmitting(false);
         }

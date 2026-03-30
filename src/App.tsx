@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
-import type { Paciente } from './types/paciente';
-import ListaPaciente from './components/ListaPaciente';
 import { Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
+import type { Paciente } from './types/paciente';
+import { supabase } from './supabase';
+
 import NavBar from './components/NavBar';
-import NotFound from './pages/NotFound';
-import DetallePaciente from './pages/DetallePaciente';
+import ListaPaciente from './components/ListaPaciente';
+
+import HomePage from './pages/HomePage';
 import Busqueda from './pages/Busqueda';
 import Registrar from './pages/Registrar';
+import DetallePaciente from './pages/DetallePaciente';
 import PlanMensual from './pages/PlanMensual';
 import Medicamentos from './pages/Medicamentos';
 import MedicamentoDetail from './pages/MedicamentoDetail';
 import Receta from './pages/Receta';
-import { supabase } from './supabase';
+import NotFound from './pages/NotFound';
 
 function App() {
     const [pacientes, setPacientes] = useState<Paciente[]>([]);

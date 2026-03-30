@@ -149,8 +149,9 @@ export default function RecetaPage() {
             const recetasData = await getRecetas(dni);
             setRecetas(recetasData);
             alert('Medicamento entregado y stock actualizado correctamente.');
-        } catch (error: any) {
-            alert(error.message || 'Error al entregar el medicamento.');
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            alert(errorMessage || 'Error al entregar el medicamento.');
         } finally {
             setIsDelivering(false);
         }

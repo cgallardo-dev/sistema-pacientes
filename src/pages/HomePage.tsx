@@ -5,7 +5,7 @@ import { supabase } from '../supabase';
 import { getPatientColor } from '../utils/colors';
 
 function HomePage() {
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<Record<string, unknown>[]>([]);
 
     useEffect(() => {
         async function fetchTratamientos() {
@@ -26,7 +26,7 @@ function HomePage() {
 
             if (error) console.error(error);
             if (data) {
-                const formattedEvents = data.map((t: any) => ({
+                const formattedEvents = data.map((t: Record<string, any>) => ({
                     title: `${t.pacientes?.nombre || 'Sin nombre'} ${t.pacientes?.apellido || ''} - ${t.tipo === 'ozonoterapia' ? 'Ozono' : 'Láser'}`,
                     start: t.fecha_hora.replace('Z', '').split('+')[0],
                     end: t.fecha_hora_fin ? t.fecha_hora_fin.replace('Z', '').split('+')[0] : undefined,
